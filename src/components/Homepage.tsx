@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { json, useLoaderData } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 interface Size {
@@ -16,19 +16,8 @@ export type Product = {
 };
 
 const Homepage = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:9000/products");
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchData();
-  }, []);
+  const products = useLoaderData() as Product[];
+
   return (
     <main className="homepage">
       <h1>My Store</h1>
@@ -49,3 +38,14 @@ const Homepage = () => {
 };
 
 export default Homepage;
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const loader = async () => {
+  const response = await fetch("http://localhost:9000/products");
+
+  if (!response.ok) {
+    return json({ message: "Could not fetch from database" }, { status: 500 });
+  } else {
+    return response;
+  }
+};

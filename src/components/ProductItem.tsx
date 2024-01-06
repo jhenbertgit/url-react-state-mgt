@@ -16,10 +16,16 @@ const ProductItem = () => {
       try {
         setLoading(true);
         const response = await fetch(`http://localhost:9000/products/${id}`);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
         const data: Product = await response.json();
         setSingleProduct(data);
+        
       } catch (error) {
-        console.error(error);
+        console.error((error as Error).message);
       } finally {
         setLoading(false);
       }
